@@ -24,5 +24,5 @@ public class Tool {
     private String Description;
 
     @OneToMany(mappedBy = "tool", cascade = CascadeType.ALL)
-    private List<Tag> tag = new ArrayList<>();
+    private List<Tag> tags = new ArrayList<>();
 }
