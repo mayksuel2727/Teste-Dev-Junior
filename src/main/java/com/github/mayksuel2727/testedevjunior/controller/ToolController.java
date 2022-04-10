@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/tools")
@@ -20,18 +22,50 @@ public class ToolController {
     private ToolRepository toolRepository;
 
     @GetMapping
-    public List<ToolDTO> listAll(){
+    public List<ToolDTO> listAll() {
         List<Tool> tools = toolRepository.findAll();
         return ToolDTO.converter(tools);
     }
 
     @PostMapping
-    public ResponseEntity<ToolDTO> register(@RequestBody @Valid Tool tool, UriComponentsBuilder uriBuilder){
-       for (int i=0; i< tool.getTags().size(); i++ ){
+    @Transactional
+    public ResponseEntity<ToolDTO> register(@RequestBody @Valid Tool tool, UriComponentsBuilder uriBuilder) {
+        for (int i = 0; i < tool.getTags().size(); i++) {
             tool.getTags().get(i).setTool(tool);
         }
         toolRepository.save(tool);
-        URI uri =  uriBuilder.path("/tools/{id}").buildAndExpand(tool.getId()).toUri();
+        URI uri = uriBuilder.path("/tools/{id}").buildAndExpand(tool.getId()).toUri();
         return ResponseEntity.created(uri).body(new ToolDTO(tool));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ToolDTO> uniqueTool(@PathVariable Integer id) {
+        Optional<Tool> tool = toolRepository.findById(id);
+        if (tool.isPresent()){
+            return ResponseEntity.ok(new ToolDTO(tool.get()));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<ToolDTO> update(@PathVariable Integer id, @RequestBody @Valid Tool toolUpdate) {
+        Optional<Tool> optionalTool = toolRepository.findById(id);
+        if (optionalTool.isPresent()){
+            Tool tool = toolUpdate.update(id, toolRepository);
+            return ResponseEntity.ok(new ToolDTO(tool));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> delete (@PathVariable Integer id){
+        Optional<Tool> optionalTool = toolRepository.findById(id);
+        if (optionalTool.isPresent()){
+            toolRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
