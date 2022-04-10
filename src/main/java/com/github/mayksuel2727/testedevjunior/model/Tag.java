@@ -13,7 +13,7 @@ public class Tag {
     private Integer id;
 
     @Column
-    private String Description;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "idTool")
