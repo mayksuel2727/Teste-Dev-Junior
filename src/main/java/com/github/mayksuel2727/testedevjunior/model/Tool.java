@@ -3,6 +3,8 @@ package com.github.mayksuel2727.testedevjunior.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,10 +16,10 @@ public class Tool {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, length = 150) @NotEmpty @NotNull
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false) @NotEmpty @NotNull
     private String link;
 
     @Column
