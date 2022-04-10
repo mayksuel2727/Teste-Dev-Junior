@@ -4,6 +4,10 @@ import com.github.mayksuel2727.testedevjunior.controller.dto.ToolDTO;
 import com.github.mayksuel2727.testedevjunior.model.Tool;
 import com.github.mayksuel2727.testedevjunior.repository.ToolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,6 +29,18 @@ public class ToolController {
     public List<ToolDTO> listAll() {
         List<Tool> tools = toolRepository.findAll();
         return ToolDTO.converter(tools);
+    }
+
+    @GetMapping("/pagination")
+    public Page<ToolDTO> listPagination(@RequestParam(required = false) String title, @PageableDefault(sort = "title", direction = Sort.Direction.ASC, page = 0, size = 10) Pageable page){
+
+        if (title == null){
+            Page<Tool> tools = toolRepository.findAll(page);
+            return ToolDTO.converter(tools);
+        }else {
+            Page<Tool> tools = toolRepository.findByTitle(title, page);
+            return ToolDTO.converter(tools);
+        }
     }
 
     @PostMapping
