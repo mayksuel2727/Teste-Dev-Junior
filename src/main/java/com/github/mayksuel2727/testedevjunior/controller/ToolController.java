@@ -4,6 +4,8 @@ import com.github.mayksuel2727.testedevjunior.controller.dto.ToolDTO;
 import com.github.mayksuel2727.testedevjunior.model.Tool;
 import com.github.mayksuel2727.testedevjunior.repository.ToolRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,12 +28,14 @@ public class ToolController {
     private ToolRepository toolRepository;
 
     @GetMapping
+    @Cacheable(value = "listOfTools")
     public List<ToolDTO> listAll() {
         List<Tool> tools = toolRepository.findAll();
         return ToolDTO.converter(tools);
     }
 
     @GetMapping("/pagination")
+    @Cacheable(value = "listOfTools")
     public Page<ToolDTO> listPagination(@RequestParam(required = false) String title, @PageableDefault(sort = "title", direction = Sort.Direction.ASC, page = 0, size = 10) Pageable page){
 
         if (title == null){
@@ -45,6 +49,7 @@ public class ToolController {
 
     @PostMapping
     @Transactional
+    @CacheEvict(value = "listOfTools", allEntries = true )
     public ResponseEntity<ToolDTO> register(@RequestBody @Valid Tool tool, UriComponentsBuilder uriBuilder) {
         for (int i = 0; i < tool.getTags().size(); i++) {
             tool.getTags().get(i).setTool(tool);
@@ -65,6 +70,7 @@ public class ToolController {
 
     @PutMapping("/{id}")
     @Transactional
+    @CacheEvict(value = "listOfTools", allEntries = true )
     public ResponseEntity<ToolDTO> update(@PathVariable Integer id, @RequestBody @Valid Tool toolUpdate) {
         Optional<Tool> optionalTool = toolRepository.findById(id);
         if (optionalTool.isPresent()){
@@ -76,6 +82,7 @@ public class ToolController {
 
     @DeleteMapping("/{id}")
     @Transactional
+    @CacheEvict(value = "listOfTools", allEntries = true )
     public ResponseEntity<?> delete (@PathVariable Integer id){
         Optional<Tool> optionalTool = toolRepository.findById(id);
         if (optionalTool.isPresent()){
