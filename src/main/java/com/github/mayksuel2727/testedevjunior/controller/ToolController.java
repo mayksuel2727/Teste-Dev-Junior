@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class ToolController {
     }
 
     @PostMapping
-    public ResponseEntity<ToolDTO> register(@RequestBody Tool tool, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<ToolDTO> register(@RequestBody @Valid Tool tool, UriComponentsBuilder uriBuilder){
        for (int i=0; i< tool.getTags().size(); i++ ){
             tool.getTags().get(i).setTool(tool);
         }
