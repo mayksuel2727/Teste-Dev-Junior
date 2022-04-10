@@ -16,6 +16,6 @@ public class Tag {
     private String Description;
 
     @ManyToOne
-    @JoinColumn(name = "idCliente")
+    @JoinColumn(name = "idTool")
     private Tool tool;
 }
