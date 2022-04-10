@@ -1,5 +1,6 @@
 package com.github.mayksuel2727.testedevjunior.model;
 
+import com.github.mayksuel2727.testedevjunior.repository.ToolRepository;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -23,8 +24,18 @@ public class Tool {
     private String link;
 
     @Column
-    private String Description;
+    private String description;
 
     @OneToMany(mappedBy = "tool", cascade = CascadeType.ALL)
     private List<Tag> tags = new ArrayList<>();
+
+    public Tool update(Integer id, ToolRepository toolRepository) {
+        Tool tool = toolRepository.getById(id);
+        tool.setDescription(this.description);
+        tool.setTitle(this.title);
+        tool.setLink(this.link);
+        tool.setTags(this.tags);
+
+        return tool;
+    }
 }
