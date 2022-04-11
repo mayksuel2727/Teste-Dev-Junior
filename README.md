@@ -25,7 +25,7 @@ Processo de seleção para desenvovedor java junior
 
 4 - com o projeto ja aberto abrir src/main/resources/application.properties e altere datasource.usename e datasource.password para o usuario e password do seu banco de dados
 
-5 - Rode a aplicação na classe UsuarioApplication
+5 - Rode a aplicação na classeTesteDevJuniorApplication.java
 
 6 - use o postman para fazer para fazer o os teste no webservice
 
